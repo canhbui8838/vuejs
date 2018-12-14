@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Hello VueJS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div id="app"></div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                searchText: "",
+                results: [],
+                history: {}
+            },
+            methods: {
+                search: function () {
+                    axios
+                        .get(`https://swapi.co/api/starships/?search=${this.searchText}`)
+                        .then(response => {
+                            this.results = response.data;
+                            this.history[this.searchText] = this.results;
+                        });
+                }
+            },
+            watch: {
+                searchText: function (newSearchText, oldSearchText) {
+                    if (this.history[newSearchText]) {
+                        this.results = this.history[newSearchText];
+                    } else {
+                        this.search();
+                    }
+                }
+                // searchText: function (newSearchText, oldSearchText) {
+                //     this.search();
+                // }
+            },
+            template: `
+                <div>
+                <label>Search:
+                62
+                <input type="text" v-model="searchText" /></label>
+                <h5>Results: <small>{{results.count}}</small></h5>
+                <ul>
+                <li v-for="result in results.results">
+                {{result.name}}
+                </li>
+                </ul>
+                </div>
+            `
+        });
+        // var app = new Vue({
+        //     el: '#app',
+        //     data: {
+        //         fontSize: 8,
+        //         fontSizeObject: { fontSize: '8px' },
+        //         fontColorObject: { color: 'red' }
+        //     },
+        //     watch: {
+        //         fontSize: function() {
+        //             this.fontSizeObject.fontSize = this.fontSize + 'px';
+        //         }
+        //     },
+        //     template: `
+        //         <div>
+        //         <h4>Dynamic Font Size with an object</h4>
+        //         <input type="number" v-model.number="fontSize" />
+        //         <p v-bind:style="[fontSizeObject, fontColorObject]">
+        //         Getting to Know Vue.js
+        //         </p>
+        //         </div>
+        //     `
+        // });
+    </script>
+</body>
+
+</html>
